@@ -1,0 +1,90 @@
+version: "3.3"
+services:
+  db:
+    image: postgres:latest
+    container_name: mypostgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: xoso-dna
+    ports:
+      - "5432:5432"
+    volumes:
+       - ../postgres-data:/var/lib/postgresql/data
+    command: postgres -c max_connections=200
+  redis:
+    image: redis
+    container_name: myredis
+    restart: always
+    command: redis-server --requirepass redis@1234
+    ports:
+      - 6379:6379
+    #cpus: 0.3
+
+  admin:
+    build:
+      context: xoso-dna-admin
+      args:
+        ENV_DEPLOY: --spring.profiles.active=dev
+    image: xoso-dna/admin:latest
+    restart: always
+    volumes:
+      - ../storages:/opt/app/files
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      TELEGRAM_TOKEN: 6347157596:AAEEp40oknweylOdGow1SgwDvm-kTlz0Mrc
+      TELEGRAM_ID: -930953699
+      DATASOURCE_CLASS_NAME: org.postgresql.Driver
+      DATASOURCE_URL: jdbc:postgresql://mypostgres:5432/xoso-dna
+      DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: postgres
+      REDIS_HOST: myredis
+      REDIS_PASSWORD: redis@1234
+  api:
+    build:
+      context: xoso-dna-api
+      args:
+        ENV_DEPLOY: --spring.profiles.active=dev
+    image: xoso-dna/api:latest
+    restart: always
+    volumes:
+      - ../storages:/opt/app/files
+    #cpus: 0.3
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: 8081
+      TELEGRAM_TOKEN: 6347157596:AAEEp40oknweylOdGow1SgwDvm-kTlz0Mrc
+      TELEGRAM_ID: -930953699
+      DATASOURCE_CLASS_NAME: org.postgresql.Driver
+      DATASOURCE_URL: jdbc:postgresql://mypostgres:5432/xoso-dna
+      DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: postgres
+      REDIS_HOST: myredis
+      REDIS_PASSWORD: redis@1234
+      APIBANK_BCEL_URL: https://apibank.otpsystem.com/api/transactions
+  schedule:
+    build:
+      context: xoso-dna-schedule
+      args:
+        ENV_DEPLOY: --spring.profiles.active=dev
+    image: xoso-dna/schedule:latest
+    restart: always
+    #cpus: 0.3
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      TELEGRAM_TOKEN: 6347157596:AAEEp40oknweylOdGow1SgwDvm-kTlz0Mrc
+      TELEGRAM_ID: -930953699
+      DATASOURCE_CLASS_NAME: org.postgresql.Driver
+      DATASOURCE_URL: jdbc:postgresql://mypostgres:5432/xoso-dna
+      DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: postgres
+      REDIS_HOST: myredis
+      REDIS_PASSWORD: redis@1234
+volumes:
+  postgres-data:

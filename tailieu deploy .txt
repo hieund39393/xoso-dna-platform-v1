@@ -1,0 +1,62 @@
+1. Cài đặt moi truong
+#cai dat docker 
+sudo apt update
+sudo apt upgrade
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+docker --version
+sudo usermod -aG docker $USER
+#cai dat maven
+sudo apt install maven
+#cai dat docker-compose 
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+docker-compose --version
+#cai dat npm 
+sudo apt-get install nodejs
+sudo apt install npm
+
+2. Deploy Frontend 
+cd vào thư mục xoso-dna-fe 
+Cấu hình các environment tronig file xoso-dna-fe/docker-compose.yml 
+    environment:
+      - REACT_APP_API_URL=http://localhost:8081/api
+      - REACT_APP_CSKH_TELEGRAM=https://t.me/+86502096648410
+      - REACT_APP_CSKH_WHATSAPP=https://wa.me/+86502096648410
+	  
+Thay thế link localhost:8081 bằng link website 
+thay thế số diên thoại cskh phù hợp 
+
+chạy lệnh 
+sudo ./start.sh 
+
+
+3. deploy backend 
+cd vào thư mục xoso-dna-platform 
+mở file docker-colmpose.yml 
+
+Chỉnh sử username-pass của db postgres
+
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+	  
+	   DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: postgres
+	  
+Chỉnh sử pass của redis (hiện tại đang set redis@1234, thay thế băng fgias trị khác )
+Chỉnh sửa giá trị bot telegram 
+      TELEGRAM_TOKEN: 6347157596:AAEEp40oknweylOdGow1SgwDvm-kTlz0Mrc
+      TELEGRAM_ID: -930953699
+<Tham khảo cách tạo bot telegram : 	  https://help.ladipage.vn/form-data/cac-buoc-cai-dat-luu-data/luu-data-ve-telegram/huong-dan-tao-token-va-group-id-o-telegram>
+
+chạy lệnh 
+sudo ./start.sh 
+
+
+4.Finish 
+Sau các bước trên thì trên máy VPS web site frontend đã chạy ở port 3000, back end đã chạy ở port 8080, 8081 (trang admin)
+Có thẻ tiếp tục cấu hình nginx/ direct admin để public web ra internet 
+	  
+
+	  

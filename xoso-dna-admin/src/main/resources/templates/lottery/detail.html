@@ -1,0 +1,62 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Chi tiết cấu hình xổ số</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết cấu hình xổ số</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row invoice">
+            <div class=" col-6">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Tên:</th>
+                            <td th:text="${lottery.name}"></td>
+                        </tr>
+                        <tr>
+                            <th>Mã</th>
+                            <td th:text="${lottery.code}"></td>
+                        </tr>
+                        <tr>
+                            <th>Danh mục</th>
+                            <td th:text="${lottery.categoryName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Loại:</th>
+                            <td th:text="${lottery.type}"></td>
+                        </tr>
+                        <tr>
+                            <th>Chế độ chơi</th>
+                            <td th:text="${lottery.modes}"></td>
+                        </tr>
+                        <tr>
+                            <th>Giờ quay số</th>
+                            <td th:text="${lottery.hour} + 'giờ - ' + ${lottery.min} + ' phút - ' + ${lottery.sec} + ' giây'"></td>
+                        </tr>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <td th:text="${lottery.active}"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div>
+                    <a th:href="${'/lotteries/search'}" class="btn btn-primary">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

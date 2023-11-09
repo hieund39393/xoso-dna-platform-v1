@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:util="http://www.springframework.org/schema/util"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/util
+   http://www.springframework.org/schema/util/spring-util.xsd
+   http://www.springframework.org/schema/security
+   http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <beans:beans>
+
+        <global-method-security pre-post-annotations="enabled"/>
+
+        <http create-session="stateless" use-expressions="true" entry-point-ref="customAuthenticationEntryPoint">
+            <csrf disabled="true"/>
+            <cors configuration-source-ref="customCorsConfigurationSource" />
+            <intercept-url pattern="/api/auth/login" access="permitAll()" method="POST" requires-channel="any" />
+            <intercept-url pattern="/**/auth/refresh-token" access="permitAll()" />
+            <intercept-url pattern="/api/users/change-password-request" access="permitAll()" />
+            <intercept-url pattern="/**/change-password" access="isFullyAuthenticated()" />
+            <intercept-url pattern="/**/create-password-withdraw" access="isFullyAuthenticated()" />
+            <intercept-url pattern="/**/update-password-withdraw" access="isFullyAuthenticated()" />
+            <intercept-url pattern="/**/users/detail" access="isFullyAuthenticated()" />
+            <intercept-url pattern="/**/staffs" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/staffs" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/wallet-transactions" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/banks/**" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/lottery/**/detail" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/lottery/**/purchase" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/lottery/**/purchased_tickets" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/lottery/**/history" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/lottery/tickets_history" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/lottery/tickets_history" access="isFullyAuthenticated()"/>
+            <intercept-url pattern="/**/giftcode/**" access="isFullyAuthenticated()"/>
+<!--            <intercept-url pattern="/**/template-content/**" access="isFullyAuthenticated()"/>-->
+            <intercept-url pattern="/**/test" access="permitAll()"/>
+
+            <intercept-url pattern="**/swagger-ui/**" access="permitAll()" />
+            <custom-filter ref="authenticationFilter" before="BASIC_AUTH_FILTER" />
+        </http>
+
+        <beans:bean id="customAuthenticationEntryPoint"
+                    class="com.xoso.api.security.exception.CustomAuthenticationEntryPoint"  lazy-init="true">
+        </beans:bean>
+
+        <beans:bean id="authenticationFilter" class="com.xoso.api.security.filter.AuthenticationFilter"/>
+
+        <beans:bean id="customAuthenticationProvider"
+                    class="com.xoso.api.security.dao.DaoAuthenticationProvider"  lazy-init="true">
+            <beans:property name="userDetailsService" ref="userDetailsService" />
+            <beans:property name="passwordEncoder" ref="customPasswordEncoder" />
+        </beans:bean>
+
+        <beans:bean id="customCorsConfigurationSource" class="org.springframework.web.cors.UrlBasedCorsConfigurationSource">
+            <beans:property name="corsConfigurations">
+                <util:map>
+                    <beans:entry key="/**">
+                        <beans:bean class="org.springframework.web.cors.CorsConfiguration">
+                            <beans:property name="allowCredentials" value="true" />
+                            <beans:property name="allowedHeaders">
+                                <beans:list>
+                                    <beans:value>Authorization</beans:value>
+                                    <beans:value>Content-Type</beans:value>
+                                </beans:list>
+                            </beans:property>
+                            <beans:property name="allowedMethods">
+                                <beans:list>
+                                    <beans:value>POST</beans:value>
+                                    <beans:value>GET</beans:value>
+                                    <beans:value>PUT</beans:value>
+                                    <beans:value>DELETE</beans:value>
+                                </beans:list>
+                            </beans:property>
+                            <beans:property name="allowedOrigins">
+                                <beans:list>
+                                    <beans:value>https://lot77.org</beans:value>
+                                    <beans:value>http://localhost:3000</beans:value>
+                                </beans:list>
+                            </beans:property>
+                            <beans:property name="exposedHeaders">
+                                <beans:list>
+                                    <beans:value>Location</beans:value>
+                                    <beans:value>Content-Disposition</beans:value>
+                                </beans:list>
+                            </beans:property>
+                            <beans:property name="maxAge" value="86400" />
+                        </beans:bean>
+                    </beans:entry>
+                </util:map>
+            </beans:property>
+        </beans:bean>
+
+
+        <authentication-manager alias="authenticationManager"
+                                erase-credentials="false">
+            <authentication-provider ref="customAuthenticationProvider" />
+        </authentication-manager>
+    </beans:beans>
+</beans:beans>

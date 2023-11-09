@@ -1,0 +1,135 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Danh sách ví</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Danh sách ví</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="card">
+        <div th:replace="fragments/spinner"></div>
+
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">Lọc</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <form th:action="@{/wallets/normal/search}" method="get">
+                <div class="card-body" style="display: flex; justify-content: end; padding-bottom: 0px;">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <select class="form-control" th:name="status" id="status" data-placeholder="Trạng thái" style="width: 100%">
+                                <option value="">Chọn trạng thái</option>
+                                <option th:each="row : ${walletsStatusOptions}"
+                                        th:value="${row.code}" th:text="${row.code}"
+                                        th:selected="${status != null && status.contains(row.code)}"/>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card-tools">
+                            <div class="input-group" style="width: 350px;">
+                                <input type="text" name="searchValue" id="searchValue" th:value="${searchValue}" class="form-control float-right" placeholder="Tìm kiếm">
+                            </div>
+                    </div>
+                    <div class="col-3 float-right">
+                        <button style="margin-bottom: 10px" type="submit" class="btn btn-success float-left">
+                            Tìm kiếm
+                        </button>
+                        <a th:href="@{export}" method="post" style="margin-bottom: 10px" class="btn btn-primary float-left">Xuất dữ liệu</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>#Mã KH</th>
+                    <th>Tài khoản</th>
+                    <th>Ngân hàng</th>
+                    <th>Số TK NH</th>
+                    <th>Tên KH</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày tạo ví</th>
+                    <th>Trạng thái</th>
+                    <th>Số dư (LAK)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${walletPage.pageItems}">
+                    <td>
+                        <a class="btn btn-info" th:href="${'/wallets/' + row.id}">
+                            <i class="fas fa-eye">
+                            </i>
+                        </a>
+                    </td>
+                    <td th:text="${row.userId}"></td>
+                    <td th:text="${row.username}"></td>
+                    <td th:text="${row.bankCode}"></td>
+                    <td th:text="${row.accountNumber}"></td>
+                    <td th:text="${row.fullName}"></td>
+                    <td th:text="${row.mobileNo}"></td>
+                    <td th:text="${row.createdDate}"></td>
+                    <td><span class="tag tag-success" th:text="${row.status}"></span></td>
+                    <td th:text="${#strings.replace(#numbers.formatDecimal(row.balance, 0, 'COMMA', 0, 'POINT'), '.00', '')}"></td>
+                    <td>
+                        <a class="btn btn-info btn-sm" th:href="${'/wallets/client/' + row.id + '/edit'}">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+
+        <nav aria-label="page navigation" th:if="${totalPages > 1}" th:with="max=3">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${pageNumber == 0 ? 'disabled' : '' }">
+                    <a class="page-link"
+                       th:href="@{/wallets/normal/search(pageSize=${pageSize}, pageNumber=${pageNumber lt 2 ? 1 : pageNumber - 1}, searchValue=${searchValue}, status=${status})}"
+                       aria-label="Previous" title="Trang sau" data-toggle="tooltip">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="page: ${#numbers.sequence(0, totalPages - 1)}"
+                    th:if="${pageNumber} >= ${page - max} and ${pageNumber} <= ${page + max} or ${page} == ${totalPages - 1} or ${page} == 0"
+                    th:classappend="${page == pageNumber ? 'active': '' }" >
+                    <span class="page-link" th:if="${pageNumber} == ${page + max} and ${page != 0}">...</span>
+                    <a class="page-link"
+                       th:if="${pageNumber} > ${page - max} and ${pageNumber} < ${page + max} or ${page} == ${totalPages - 1} or ${page} == 0"
+                       th:href="@{/wallets/normal/search(pageSize=${pageSize}, pageNumber=${page}, searchValue=${searchValue}, status=${status})}" th:text="${page+1}">1</a>
+                    <span class="page-link" th:if="${pageNumber} == ${page - max} and ${page} != ${totalPages - 1}">...</span>
+                </li>
+                <li class="page-item" th:classappend="${pageNumber + 1 >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/wallets/normal/search(pageSize=${pageSize}, pageNumber=${pageNumber + 1}, searchValue=${searchValue}, status=${status})}"
+                       aria-label="Next" title="Trang trước" data-toggle="tooltip">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</div>
+</body>
+</html>

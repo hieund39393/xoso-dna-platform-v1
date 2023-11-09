@@ -1,0 +1,182 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+  <title>Sửa ví</title>
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+  <ol class="breadcrumb float-sm-right">
+    <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+    <li class="breadcrumb-item active">Sửa ví</li>
+  </ol>
+</div>
+
+<div layout:fragment="content">
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-default">
+        <div class="card-body">
+          <form th:action="${'/wallets/client/' + wallet.id + '/bank-account/update'}" th:object="${wallet}" method="post">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Balance</label>
+                  <input type="number" readonly id="balance" th:field="*{balance}" class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Danh sách tài khoản</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addBankAccount">Thêm tài khoản</button>
+                    </div>
+                  </div>
+
+                  <!-- /.card-header -->
+                  <div class="col-12 table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Ngân hàng</th>
+                          <th>Tên tài khoản</th>
+                          <th>Số tài khoản</th>
+                          <th>Số thẻ</th>
+                          <th>Kích hoạt?</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="customFields">
+                        <tr th:each="bankAccount,status : ${wallet.bankAccounts}">
+                          <input type="hidden" th:field="*{bankAccounts[__${status.index}__].id}" id="id" class="form-control">
+                          <td>
+                            <select class="form-control custom-select" th:field="*{bankAccounts[__${status.index}__].bankId}" id="banks" data-placeholder="Service" style="width: 100%">
+
+                              <option th:each="bank : ${banks}"
+                                      th:value="${bank.id}" th:text="${bank.name}"/>
+                            </select>
+                          </td>
+                          <td>
+                            <input type="text"th:field="*{bankAccounts[__${status.index}__].accountName}" id="accountName" class="form-control">
+                          </td>
+                          <td>
+                            <input type="text" th:field="*{bankAccounts[__${status.index}__].accountNumber}" id="accountNumber" class="form-control">
+                          </td>
+                          <td>
+                            <input type="text" th:field="*{bankAccounts[__${status.index}__].cardNumber}" id="cardNumber" class="form-control">
+                          </td>
+                          <td>
+                            <input type="checkbox" th:id="${bankAccount.id}" th:field="*{bankAccounts[__${status.index}__].enabled}">
+                          </td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+            </div>
+
+            <div class="col-12" style="text-align: center;">
+              <a th:href="${'/wallets/normal/search'}" class="btn btn-secondary">Huỷ</a>
+              <input type="submit" value="Đệ trình" class="btn btn-primary">
+            </div>
+          </form>
+
+          <div class="modal fade" id="addBankAccount">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addClassModalLabel">Thêm tài khoản</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form th:action="${'/wallets/client/' + wallet.id + '/bank-account/add'}" th:object="${clientBankAccount}" method="post">
+                  <div class="modal-body">
+
+                    <div class="form-group">
+                      <label for="bankNew">Ngân hàng:</label>
+                      <select class="select4" th:field="*{bankId}" id="bankNew" data-placeholder="Service" style="width: 100%">
+                        <option th:each="row : ${banks}"
+                                th:value="${row.id}" th:text="${row.name}"/>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="accountName1">Tên tài khoản:</label>
+                      <input type="text" class="form-control" id="accountName1" th:field="*{accountName}"/>
+                    </div>
+                    <div class="form-group">
+                      <label for="accountNumber1">Số tài khoản:</label>
+                      <input type="text" class="form-control" id="accountNumber1" th:field="*{accountNumber}"/>
+                    </div>
+                    <div class="form-group">
+                      <label for="cardNumber1">Số thẻ:</label>
+                      <input type="number" class="form-control" id="cardNumber1" th:field="*{cardNumber}"/>
+                    </div>
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="enabled" th:field="*{enabled}"/>
+                      <label class="form-check-label" for="enabled">Hoạt đông?:</label>
+                    </div>
+                  </div>
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                    <button type="submit" class="btn btn-primary">Đệ trình</button>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+<!--          <div class="modal fade" id="deleteBankAccount">-->
+<!--            <div class="modal-dialog">-->
+<!--              <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                  <h4 class="modal-title">Xoá tài khoản</h4>-->
+<!--                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                  </button>-->
+<!--                </div>-->
+<!--                <form th:action="${'/wallets/master/' + wallet.id + '/bank-account/add'}" th:object="${masterBankAccount}" method="post">-->
+<!--                  <div class="modal-body">-->
+<!--                    <p>One fine body&hellip;</p>-->
+<!--                  </div>-->
+<!--                  <div class="modal-footer justify-content-between">-->
+<!--                    <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>-->
+<!--                    <button type="submit" class="btn btn-primary">Đệ trình</button>-->
+<!--                  </div>-->
+<!--                </form>-->
+
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+
+<script>
+  $(function () {
+    $('.select4').select2();
+  });
+
+
+
+</script>
+</body>
+</html>

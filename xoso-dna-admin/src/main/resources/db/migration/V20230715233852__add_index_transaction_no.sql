@@ -1,0 +1,1 @@
+CREATE INDEX idx_wallet_transactions_no ON wallet_transactions (transaction_no);

@@ -1,0 +1,51 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Cập nhật cấu hình ngôn ngữ</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Cập nhật cấu hình ngôn ngữ</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="box">
+        <form data-toggle="validator" role="form" th:object="${translatedRequest}" th:action="${'/translations/' + translatedRequest.id}" method="post">
+            <div class="box-body">
+                <input type="hidden" th:field="*{id}"/>
+
+                <div class="form-group">
+                    <label for="code">Code</label>
+                    <input type="text" required="true" class="form-control" th:field="*{code}" id="code" />
+                </div>
+                <div class="form-group">
+                    <label for="viet">Viet</label>
+                    <textarea type="text" cols="3" class="form-control" th:field="*{viet}" id="viet"></textarea>
+                </div>
+         <!--       <div class="form-group">
+                    <label for="thai">Thai</label>
+                    <textarea type="text" cols="3" class="form-control" th:field="*{thai}" id="thai"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="cam">Cam</label>
+                    <textarea type="text" cols="3"  class="form-control" th:field="*{cam}" id="cam"></textarea>
+                </div>-->
+                <div class="form-group">
+                    <label for="lao">Lao</label>
+                    <textarea type="text" cols="3"  class="form-control" th:field="*{lao}" id="lao"></textarea>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button class="btn btn-primary" type="submit">Save</button>
+                <a th:href="${'/translations/search'}" class="btn btn-primary">Quay lại danh sách</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

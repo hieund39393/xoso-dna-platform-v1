@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>One Admin</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+    <!-- Theme style -->
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/adminlte.min.css}"/>
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <!-- /.login-logo -->
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <a href="../../index2.html" class="h1"><b>One Admin</b></a>
+        </div>
+        <div class="card-body">
+            <p class="login-box-msg">Mã OTP đã được gửi về số điện thoại của bạn. Bạn vui lòng nhập mã tại đây.</p>
+
+            <div th:if="${param.error}">
+                <div class="callout callout-danger">
+                    <p>Mã OTP không đúng. Bạn vui lòng thử lại!</p>
+                </div>
+            </div>
+
+            <form th:action="@{/opt-verify}" th:object="${otpVerifyRequest}" method="post">
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" name="otp" id="otp" th:field="*{otp}" placeholder="Mã OTP">
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+</body>
+</html>
+

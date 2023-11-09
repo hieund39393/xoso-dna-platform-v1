@@ -1,0 +1,5 @@
+alter table lottery_category add column code varchar (225);
+alter table lottery add column code varchar (225);
+
+CREATE INDEX idx_lottery_category_code ON lottery_category (code);
+CREATE INDEX idx_lottery_code ON lottery (code);

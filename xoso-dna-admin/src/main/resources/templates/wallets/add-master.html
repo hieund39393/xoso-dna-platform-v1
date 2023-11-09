@@ -1,0 +1,64 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+  <title>Thêm ví master</title>
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+  <ol class="breadcrumb float-sm-right">
+    <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+    <li class="breadcrumb-item active">Thêm ví master</li>
+  </ol>
+</div>
+
+<div layout:fragment="content">
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-default">
+        <div class="card-body">
+          <form th:action="${'/wallets/master/add'}" th:object="${wallet}" method="post">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Balance</label>
+                  <input type="number" id="balance" th:field="*{balance}" class="form-control">
+                  <ul th:if="${errors != null}">
+                    <li th:each="err : ${errors}" th:text="${err.defaultMessage}" style="color: #e34646" />
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Tài khoản hệ thống</label>
+                  <select class="form-control select3" th:field="*{userId}" style="width: 100%;">
+                    <option th:each="row : ${users}"
+                            th:value="${row.id}" th:text="${row.username}"/>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="col-12" style="text-align: center;">
+              <a th:href="${'/wallets/master/search'}" class="btn btn-secondary">Huỷ</a>
+              <input type="submit" value="Đệ trình" class="btn btn-primary">
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  $(function () {
+    $('.select3').select2();
+  });
+</script>
+</body>
+</html>

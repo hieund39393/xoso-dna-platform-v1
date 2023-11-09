@@ -1,0 +1,134 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Quản lý ngôn ngữ</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý ngôn ngữ</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="card">
+        <div th:replace="fragments/spinner"></div>
+
+        <div class="card card-default">
+            <div class="card-header">
+
+                    <!--                        <a th:href="@{delete/(id=${users.id})}" class="btn btn-danger delBtn">Delete</a>-->
+                <a th:href="${'/translations/create'}" class="btn btn-primary">Tạo mới</a>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <form th:action="@{/translations/search}" method="get">
+                <div class="card-body" style="display: flex; justify-content: center; padding-bottom: 0px;">
+
+                    <div class="card-tools">
+                            <div class="input-group input-group" style="width: 350px;">
+                                <input type="text" name="searchValue" id="searchValue" th:value="${searchValue}" class="form-control float-right" placeholder="Tìm kiếm">
+                            </div>
+                    </div>
+                    <div class="col-3 float-center">
+                        <button style="margin-bottom: 10px" type="submit" class="btn btn-success float-left">
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                <tr>
+                    <th>#Mã</th>
+                    <th>Viet</th>
+               <!--     <th>Thai</th>
+                    <th>Cam</th>-->
+                    <th>Lao</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${translatedStringDataPage.pageItems}">
+                    <td th:text="${row.code}"></td>
+                    <td th:text="${row.viet}"></td>
+          <!--          <td th:text="${row.thai}"></td>
+                    <td th:text="${row.cam}"></td>-->
+                    <td th:text="${row.lao}"></td>
+                    <td>
+<!--                        <a th:href="@{delete/(id=${users.id})}" class="btn btn-danger delBtn">Delete</a>-->
+                        <a th:href="${'/translations/' + row.id}" class="btn btn-primary">Edit</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+
+        <nav aria-label="page navigation" th:if="${totalPages > 1}" th:with="max=3">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${pageNumber == 0 ? 'disabled' : '' }">
+                    <a class="page-link"
+                       th:href="@{/translations/search(pageSize=${pageSize}, pageNumber=${pageNumber lt 2 ? 1 : pageNumber - 1}, searchValue=${searchValue})}"
+                       aria-label="Previous" title="Trang sau" data-toggle="tooltip">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="page: ${#numbers.sequence(0, totalPages - 1)}"
+                    th:if="${pageNumber} >= ${page - max} and ${pageNumber} <= ${page + max} or ${page} == ${totalPages - 1} or ${page} == 0"
+                    th:classappend="${page == pageNumber ? 'active': '' }" >
+                    <span class="page-link" th:if="${pageNumber} == ${page + max} and ${page != 0}">...</span>
+                    <a class="page-link"
+                       th:if="${pageNumber} > ${page - max} and ${pageNumber} < ${page + max} or ${page} == ${totalPages - 1} or ${page} == 0"
+                       th:href="@{/translations/search(pageSize=${pageSize}, pageNumber=${page}, searchValue=${searchValue})}" th:text="${page+1}">1</a>
+                    <span class="page-link" th:if="${pageNumber} == ${page - max} and ${page} != ${totalPages - 1}">...</span>
+                </li>
+                <li class="page-item" th:classappend="${pageNumber + 1 >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/translations/search(pageSize=${pageSize}, pageNumber=${pageNumber + 1}, searchValue=${searchValue})}"
+                       aria-label="Next" title="Trang trước" data-toggle="tooltip">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+
+
+
+    <div class="modal fade" id="removeModalCenter" tabindex="-1" role="dialog" aria-labelledby="removeModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeModalCenterTitle">Alert message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="alert alert-danger">
+                        Are You sure You want to delete this User?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a href="" class="btn btn-danger" id="delRef">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

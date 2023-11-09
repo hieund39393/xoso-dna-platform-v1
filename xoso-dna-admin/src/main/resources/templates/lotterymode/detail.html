@@ -1,0 +1,50 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Chi tiết cấu hình giá vé</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết cấu hình giá vé</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row invoice">
+            <div class=" col-6">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Tên:</th>
+                            <td th:text="${lotteryMode.name}"></td>
+                        </tr>
+                        <tr>
+                            <th>Mã</th>
+                            <td th:text="${lotteryMode.code}"></td>
+                        </tr>
+                        <tr>
+                            <th>Giá tiền 1 vé:</th>
+                            <td th:text="${lotteryMode.price}"></td>
+                        </tr>
+                        <tr>
+                            <th>Giá tiền thắng:</th>
+                            <td th:text="${lotteryMode.prizeMoney}"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div>
+                    <a th:href="${'/lotterymode/search'}" class="btn btn-primary">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

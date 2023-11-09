@@ -1,0 +1,54 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Chi tiết cấu hình ngôn ngữ</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết cấu hình ngôn ngữ</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row invoice">
+            <div class=" col-6">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Mã:</th>
+                            <td th:text="${translatedStringData.code}"></td>
+                        </tr>
+                        <tr>
+                            <th>Viet</th>
+                            <td th:text="${translatedStringData.viet}"></td>
+                        </tr>
+            <!--            <tr>
+                            <th>Thai</th>
+                            <td th:text="${translatedStringData.thai}"></td>
+                        </tr>
+                        <tr>
+                            <th>Cam:</th>
+                            <td th:text="${translatedStringData.cam}"></td>
+                        </tr>-->
+                        <tr>
+                            <th>Lao</th>
+                            <td th:text="${translatedStringData.lao}"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div>
+                    <a th:href="${'/translations/search'}" class="btn btn-primary">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

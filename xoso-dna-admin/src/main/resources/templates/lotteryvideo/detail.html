@@ -1,0 +1,55 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Chi tiết video</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết video</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row invoice">
+            <div class=" col-6">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th>Index</th>
+                            <td th:text="${lotteryVideo.index}"></td>
+                        </tr>
+                        <tr>
+                            <th style="width:50%">Tên:</th>
+                            <td th:text="${lotteryVideo.group}"></td>
+                        </tr>
+
+                        <tr>
+                            <th>Number:</th>
+                            <td th:text="${lotteryVideo.number}"></td>
+                        </tr>
+                        <tr>
+                            <th>Khoảng thời gian:</th>
+                            <td th:text="${lotteryVideo.duration}"></td>
+                        </tr>
+                        <tr>
+                            <th>Url:</th>
+                            <td th:text="${lotteryVideo.url}"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div>
+                    <a th:href="${'/lotteryvideo/search'}" class="btn btn-primary">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

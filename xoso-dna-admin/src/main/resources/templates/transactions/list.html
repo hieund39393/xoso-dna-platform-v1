@@ -1,0 +1,153 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Giao dịch</title>
+    <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+
+
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">Lọc</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <form th:action="@{/wallet-transactions}" method="get">
+                <div class="card-body" style="display: flex; justify-content: end; padding-bottom: 0px;">
+
+                   <div class="row" style="width: 100%">
+                       <div class="col-md-3">
+                           <div class="form-group">
+                               <div class="input-group">
+                                   <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="far fa-calendar-alt"></i>
+                                      </span>
+                                   </div>
+                                   <input type="text" class="form-control float-right" placeholder="Ngày giao dịch" id="reservation">
+                               </div>
+                           </div>
+                           <input type="hidden" name="dateFrom" th:value="${dateFrom}"/>
+                           <input type="hidden" name="dateTo" th:value="${dateTo}"/>
+                       </div>
+
+                       <div class="col-md-3">
+                           <div class="form-group">
+                               <select class="select2" th:name="status" id="status" multiple="multiple" data-placeholder="Trạng thái" style="width: 100%">
+
+                                   <option th:each="row : ${transactionStatusOptions}"
+                                           th:value="${row}" th:text="${row}"
+                                           th:selected="${status != null && status.contains(row)}"/>
+                               </select>
+                           </div>
+                       </div>
+
+                       <div class="col-md-3">
+                           <div class="input-group input-group" style="width: 300px;">
+                               <input type="text" name="searchValue" id="searchValue" th:value="${searchValue}" class="form-control float-right" placeholder="Tìm kiếm">
+                           </div>
+                       </div>
+                       <div class="col-3">
+                           <button style="margin-bottom: 10px" type="submit" class="btn btn-success float-right">
+                               Tìm kiếm
+                           </button>
+                       </div>
+                   </div>
+
+                </div>
+            </form>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>#Mã GD</th>
+                    <th>Tài khoản KH</th>
+                    <th>Tên KH</th>
+                    <th>Số ĐT</th>
+                    <th>Loại giao dịch</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngừơi tạo</th>
+                    <th>Nội dung</th>
+                    <th>Trạng thái</th>
+                    <th>Số tiền (LAK)</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${transactionPage.pageItems}">
+                        <td>
+                            <a class="btn btn-info" th:href="${'/wallet-transactions/' + row.id}">
+                                <i class="fas fa-eye">
+                                </i>
+                            </a>
+                        </td>
+                        <td th:text="${row.transactionNo}"></td>
+                        <td th:text="${row.username}"></td>
+                        <td th:text="${row.fullName}"></td>
+                        <td th:text="${row.mobileNo}"></td>
+                        <td th:text="${row.transactionType}"></td>
+                        <td th:text="${row.submittedDate}"></td>
+                        <td th:text="${row.submittedBy}"></td>
+                        <td th:text="${row.content}"></td>
+                        <td><span class="tag tag-success" th:text="${row.transactionStatus}"></span></td>
+                        <td th:text="${#strings.replace(#numbers.formatDecimal(row.amount, 0, 'COMMA', 0, 'POINT'), '.00', '')}"></td>
+                    </tr>
+                </tbody>
+<!--                <tfoot>-->
+<!--                    <tr>-->
+<!--                        <th  colspan="7">Tổng số tiền giao dịch</th>-->
+<!--                        <th>100,000,000 đ</th>-->
+<!--                    </tr>-->
+<!--                </tfoot>-->
+            </table>
+        </div>
+        <!-- /.card-body -->
+
+        <nav aria-label="page navigation" th:if="${totalPages > 1}" th:with="max=3">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${pageNumber == 0 ? 'disabled' : '' }">
+                    <a class="page-link"
+                       th:href="@{/wallet-transactions(pageSize=${pageSize}, pageNumber=${pageNumber lt 2 ? 1 : pageNumber - 1}, dateFrom=${dateFrom}, dateTo=${dateTo}, status=${status}, searchValue=${searchValue})}"
+                       aria-label="Previous" title="Trang sau" data-toggle="tooltip">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="page: ${#numbers.sequence(0, totalPages - 1)}"
+                    th:if="${pageNumber} >= ${page - max} and ${pageNumber} <= ${page + max} or ${page} == ${totalPages - 1} or ${page} == 0"
+                    th:classappend="${page == pageNumber ? 'active': '' }" >
+                    <span class="page-link" th:if="${pageNumber} == ${page + max} and ${page != 0}">...</span>
+                    <a class="page-link"
+                       th:if="${pageNumber} > ${page - max} and ${pageNumber} < ${page + max} or ${page} == ${totalPages - 1} or ${page} == 0"
+                       th:href="@{/wallet-transactions(pageSize=${pageSize}, pageNumber=${page}, dateFrom=${dateFrom}, dateTo=${dateTo}, status=${status}, searchValue=${searchValue})}" th:text="${page+1}">1</a>
+                    <span class="page-link" th:if="${pageNumber} == ${page - max} and ${page} != ${totalPages - 1}">...</span>
+                </li>
+                <li class="page-item" th:classappend="${pageNumber + 1 >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/wallet-transactions(pageSize=${pageSize}, pageNumber=${pageNumber + 1}, dateFrom=${dateFrom}, dateTo=${dateTo}, status=${status}, searchValue=${searchValue})}"
+                       aria-label="Next" title="Trang trước" data-toggle="tooltip">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</div>
+<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+<script th:src="@{/plugins/inputmask/jquery.inputmask.min.js}"></script>
+<script>
+</script>
+</body>
+</html>

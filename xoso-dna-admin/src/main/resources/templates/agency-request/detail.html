@@ -1,0 +1,122 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Chi tiết yêu cầu</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết yêu cầu</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row text-right">
+            <div class="col-12" style="margin-block: 10px; display: flex; justify-content: flex-end;">
+
+                <button th:if="${agencyRequest.status == 'PROCESSING'}" type="button" class="btn btn-success" data-toggle="modal" data-target="#approve" style="width: 120px; margin-right: 10px">Duyệt</button>
+                <button th:if="${agencyRequest.status == 'PROCESSING'}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#reject" style="width: 120px;">Từ chối</button>
+
+            </div>
+
+        </div>
+        <div class="row invoice">
+            <div class=" col-6">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Trạng thái:</th>
+                            <td style="color: rgb(37, 88, 228);" th:text="${agencyRequest.status}"></td>
+                        </tr>
+                        <tr>
+                            <th style="width:50%">Tên:</th>
+                            <td th:text="${agencyRequest.fullName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td th:text="${agencyRequest.email}"></td>
+                        </tr>
+                        <tr>
+                            <th>Tên tài khoản</th>
+                            <td th:text="${agencyRequest.accountName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Số tài khoản:</th>
+                            <td th:text="${ agencyRequest.accountNumber}"></td>
+                        </tr>
+                        <tr>
+                            <th>Ngân hàng:</th>
+                            <td th:text="${agencyRequest.bankName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Ghi chú:</th>
+                            <td th:text="${agencyRequest.note}"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div>
+                    <a th:href="${'/agencies/request/search'}" class="btn btn-primary">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="reject">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="width: 100%; text-align:center" >Từ chối yêu cầu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form th:action="${'/agencies/request/' + agencyRequest.id + '/reject'}" th:object="${agencyRequestReject}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="reason">Ghi chú:</label>
+                            <textarea id="reason" class="form-control" rows="3" th:field="*{reason}"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                        <button type="submit" class="btn btn-primary">Xác nhận</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="approve">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="width: 100%; text-align:center" >Duyệt yêu cầu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form th:action="${'/agencies/request/' + agencyRequest.id + '/approve'}" method="post">
+                    <div class="modal-body">
+                        <div class="modal-body">
+                            Bạn có muốn duyệt yêu cầu?
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                        <button type="submit" class="btn btn-primary">Xác nhận</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

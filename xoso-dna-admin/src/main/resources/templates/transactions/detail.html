@@ -1,0 +1,199 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Giao dịch</title>
+    <link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết giao dịch</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row text-right">
+            <div class="col-12" style="margin-block: 10px; display: flex; justify-content: flex-end;">
+
+                    <button th:if="${transaction.transactionStatus == 'NEW' && transaction.transactionType == 'DEPOSIT'}" type="button" class="btn btn-success" data-toggle="modal" data-target="#approveDeposit" style="width: 120px; margin-right: 10px">Duyệt</button>
+                    <button th:if="${transaction.transactionStatus == 'NEW' && transaction.transactionType == 'WITHDRAW'}" type="button" class="btn btn-success" data-toggle="modal" data-target="#approveWithdraw" style="width: 120px;">Duyệt</button>
+                    <button th:if="${transaction.transactionStatus == 'NEW'}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#rejectTransaction" style="width: 130px;">Từ chối</button>
+
+            </div>
+
+        </div>
+        <div class="row invoice">
+            <div class=" col-6">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">#No:</th>
+                            <td th:text="${transaction.transactionNo}"></td>
+                        </tr>
+                        <tr>
+                            <th>Tài khoản KH</th>
+                            <td th:text="${transaction.username}"></td>
+                        </tr>
+                        <tr>
+                            <th>Tên KH</th>
+                            <td th:text="${transaction.fullName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Số ĐT</th>
+                            <td th:text="${transaction.mobileNo}"></td>
+                        </tr>
+                        <tr>
+                            <th style="width:50%">Trạng thái:</th>
+                            <td style="color: rgb(37, 88, 228);" th:text="${transaction.transactionStatus}"></td>
+                        </tr>
+                        <tr>
+                            <th>Loại giao dịch</th>
+                            <td th:text="${transaction.transactionType}"></td>
+                        </tr>
+                        <tr>
+                            <th>Ngày tạo</th>
+                            <td th:text="${transaction.submittedDate}"></td>
+                        </tr>
+                        <tr>
+                            <th>Ngày duyệt</th>
+                            <td th:text="${transaction.approvedDate}"></td>
+                        </tr>
+                        <tr>
+                            <th>Số tiền</th>
+                            <td th:text="${#strings.replace(#numbers.formatDecimal(transaction.amount, 0, 'COMMA', 0, 'POINT'), '.00', '') + ' VND'}"></td>
+                        </tr>
+
+                        <tr th:if="${transaction.transactionType == 'DEPOSIT'}">
+                            <th>Nội dung chuyển khoản</th>
+                            <td th:text="${transaction.content}"></td>
+                        </tr>
+
+                        <tr th:if="${transaction.transactionType == 'WITHDRAW'}">
+                            <th>Ngân hàng</th>
+                            <td th:text="${transaction.bankName}"></td>
+                        </tr>
+
+                        <tr th:if="${transaction.transactionType == 'WITHDRAW'}">
+                            <th>Số tài khoản</th>
+                            <td th:text="${transaction.accountNumber}"></td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="approveDeposit">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addClassModalLabel">Duyệt giao dịch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form th:action="${'/wallet-transactions/' + transaction.id + '/' + transaction.transactionType + '/APPROVE'}" th:object="${approveTransactionRequest}" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="refNumber">Mã giao dịch:</label>
+                                <input type="text" class="form-control" id="refNumber" th:field="*{refNumber}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount">Số tiền:</label>
+                                <input type="number" class="form-control" id="amount" th:field="*{amount}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="defaultDate">Ngày giao dịch:</label>
+                                <div class="input-group date" id="defaultDate" data-target-input="nearest">
+                                    <input type="text" th:field="*{refDate}" class="form-control datetimepicker-input" data-target="#defaultDate"/>
+                                    <div class="input-group-append" data-target="#defaultDate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment">Ghi chú:</label>
+                                <textarea id="comment" class="form-control" rows="3" th:field="*{comment}"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="approveWithdraw">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Duyệt giao dịch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form th:action="${'/wallet-transactions/' + transaction.id + '/' + transaction.transactionType + '/APPROVE'}" th:object="${approveTransactionRequest}" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="comment1">Ghi chú:</label>
+                                <textarea id="comment1" class="form-control" rows="3" th:field="*{comment}"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="rejectTransaction">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Từ chối giao dịch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form th:action="${'/wallet-transactions/' + transaction.id + '/' + transaction.transactionType + '/REJECT'}" th:object="${approveTransactionRequest}" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="comment1">Ghi chú:</label>
+                                <textarea id="comment1" class="form-control" rows="3" th:field="*{comment}"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+<script th:src="@{/plugins/inputmask/jquery.inputmask.min.js}"></script>
+<script>
+    $(function () {
+        $('#reservation').daterangepicker();
+    });
+</script>
+</body>
+</html>

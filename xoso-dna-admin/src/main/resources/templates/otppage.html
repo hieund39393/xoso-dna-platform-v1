@@ -1,0 +1,45 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Verify OTP</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Verify OTP</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="card card-outline card-primary">
+            <div class="card-body" style="margin: auto; width: 50%;">
+                <p class="login-box-msg">Mã OTP đã được gửi về số điện thoại của bạn. Bạn vui lòng nhập mã tại đây.</p>
+
+                <div th:if="${param.error}">
+                    <div class="callout callout-danger">
+                        <p>Mã OTP không đúng. Bạn vui lòng thử lại!</p>
+                    </div>
+                </div>
+
+                <form th:action="${'/otp/' + commandId + '/verify'}" th:object="${otpVerifyRequest}" method="post">
+                    <div class="input-group mb-3">
+                        <input type="number" required class="form-control" name="otp" id="otp" th:field="*{otp}" placeholder="Mã OTP">
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card-body -->
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

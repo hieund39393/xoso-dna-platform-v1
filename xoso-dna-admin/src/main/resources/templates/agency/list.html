@@ -1,0 +1,101 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Danh sách đại lý</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Danh sách đại lý</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="card">
+        <div th:replace="fragments/spinner"></div>
+
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">Lọc</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <form th:action="@{/agencies/search}" method="get">
+                <div class="card-body" style="display: flex; justify-content: center; padding-bottom: 0px;">
+
+                    <div class="card-tools">
+                            <div class="input-group input-group" style="width: 350px;">
+                                <input type="text" name="searchValue" id="searchValue" th:value="${searchValue}" class="form-control float-right" placeholder="Tìm kiếm">
+                            </div>
+                    </div>
+                    <div class="col-3 float-right">
+                        <button style="margin-bottom: 10px" type="submit" class="btn btn-success float-left">
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Số ĐT</th>
+                    <th>Email</th>
+                    <th>Level</th>
+                    <th>Số tài khoản</th>
+                    <th>Tên tài khoản</th>
+                    <th>Ngân hàng</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${agencyRequestPage.pageItems}">
+                    <td th:text="${row.fullName}"></td>
+                    <td th:text="${row.mobileNo}"></td>
+                    <td th:text="${row.email}"></td>
+                    <td th:text="${row.agencyLevel}"></td>
+                    <td th:text="${row.accountNumber}"></td>
+                    <td th:text="${row.accountName}"></td>
+                    <td th:text="${row.bankName}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+
+        <nav aria-label="Pagination" th:if="${agencyRequestPage.totalFilteredRecords > 0}">
+            <ul class="pagination justify-content-center font-weight-bold">
+                <li class="page-item" th:classappend="${pageNumber == 0 ? 'disabled' : '' }">
+                    <a class="page-link"
+                       th:href="@{/agencies/search(pageSize=${pageSize}, pageNumber=${pageNumber > 2 ? 1 : pageNumber - 1}, searchValue=${searchValue})}"
+                       aria-label="Previous" title="Trang sau" data-toggle="tooltip">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence( 1, totalPages, 1)}" th:classappend="${i == pageNumber + 1 ? 'active' : '' }">
+                    <a class="page-link" th:href="@{/agencies(pageSize=${pageSize}, pageNumber=${i - 1}, searchValue=${searchValue})}" th:text="${i}"
+                       th:title="${'Trang '+ i}" data-toggle="tooltip"></a>
+                </li>
+                <li class="page-item" th:classappend="${pageNumber + 1 >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/agencies/search(pageSize=${pageSize}, pageNumber=${pageNumber + 1}, searchValue=${searchValue})}"
+                       aria-label="Next" title="Trang trước" data-toggle="tooltip">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

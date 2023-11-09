@@ -1,0 +1,1 @@
+ALTER TABLE master_bank_account ADD "user_name" varchar(150) NULL;

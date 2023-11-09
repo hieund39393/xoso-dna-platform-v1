@@ -1,0 +1,35 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="layout">
+<head>
+    <title>Upload ảnh</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a th:href="${'/'}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Upload ảnh</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div>
+        <form
+                id="uploadForm"
+                method="post"
+                th:action="@{/files/upload}"
+                enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Chọn ảnh:</label>
+                <input required class="form-control" style="height: calc(2.5rem + 2px)" id="input-file" type="file" name="file" accept="image/png, image/jpeg" />
+            </div>
+            </br>
+            <button class="btn btn-primary"  type="submit">
+                Upload
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

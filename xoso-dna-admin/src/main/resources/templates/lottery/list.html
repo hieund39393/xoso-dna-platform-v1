@@ -1,0 +1,320 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Cấu hình xổ số</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Cấu hình xổ số</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="card">
+        <div th:replace="fragments/spinner"></div>
+
+        <div class="card card-default">
+            <div class="card-header">
+                <button class="btn btn-primary lotteryNewBtn">Tạo mới</button>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <form th:action="@{/lotteries/search}" method="get">
+                <div class="card-body" style="display: flex; justify-content: center; padding-bottom: 0px;">
+
+                    <div class="card-tools">
+                            <div class="input-group input-group" style="width: 350px;">
+                                <input type="text" name="searchValue" id="searchValue" th:value="${searchValue}" class="form-control float-right" placeholder="Tìm kiếm">
+                            </div>
+                    </div>
+                    <div class="col-3 float-right">
+                        <button style="margin-bottom: 10px" type="submit" class="btn btn-success float-left">
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                <tr>
+                    <th>#Tên</th>
+                    <th>Mã</th>
+                    <th>Danh mục</th>
+                    <th>Loại</th>
+                    <th>Chế độ chơi</th>
+                    <th>Giờ quay số</th>
+                    <th>Trạng thái</th>
+                    <th>Xổ số HOT</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${lotteryPage.pageItems}">
+                    <td th:text="#{${row.code}}"></td>
+                    <td th:text="${row.code}"></td>
+                    <td th:text="${row.categoryName}"></td>
+                    <td th:text="${row.type}"></td>
+                    <td th:text="${row.modes}"></td>
+                    <td th:text="${row.hour} + 'giờ - ' + ${row.min} + ' phút - ' + ${row.sec} + ' giây'"></td>
+                    <td th:text="${row.active}"></td>
+                    <td th:text="${row.vip}"></td>
+                    <td>
+<!--                        <a th:href="@{delete/(id=${users.id})}" class="btn btn-danger delBtn">Delete</a>-->
+                        <a th:href="${'/lotteries/' + row.id}" class="btn btn-primary lotteryEditBtn">Edit</a>
+                        <a th:href="${'/lotteries/' + row.id}" class="btn btn-success setupResultBtn">Setup Result</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+
+        <nav aria-label="Pagination" th:if="${lotteryPage.totalFilteredRecords > 0}">
+            <ul class="pagination justify-content-center font-weight-bold">
+                <li class="page-item" th:classappend="${pageNumber == 0 ? 'disabled' : '' }">
+                    <a class="page-link"
+                       th:href="@{/lotteries/search(pageSize=${pageSize}, pageNumber=${pageNumber > 2 ? 1 : pageNumber - 1}, searchValue=${searchValue})}"
+                       aria-label="Previous" title="Trang sau" data-toggle="tooltip">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence( 1, totalPages, 1)}" th:classappend="${i == pageNumber + 1 ? 'active' : '' }">
+                    <a class="page-link" th:href="@{/lotteries/search(pageSize=${pageSize}, pageNumber=${i - 1}, searchValue=${searchValue})}" th:text="${i}"
+                       th:title="${'Trang '+ i}" data-toggle="tooltip"></a>
+                </li>
+                <li class="page-item" th:classappend="${pageNumber + 1 >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/lotteries/search(pageSize=${pageSize}, pageNumber=${pageNumber + 1}, searchValue=${searchValue})}"
+                       aria-label="Next" title="Trang trước" data-toggle="tooltip">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="formUpdate">
+        <form th:action="@{/lotteries}" method="post">
+            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateModalLabel">Cấu hình xổ số</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" id="id" name="id" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-form-label">Tên:</label>
+                                <input type="text" class="form-control" id="name" name="name" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="code" class="col-form-label">Mã:</label>
+                                <input type="text" class="form-control" id="code" name="code" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="lotteryCategoryIdUp">Danh mục:</label>
+                                <select class="form-control custom-select" id="lotteryCategoryIdUp" name="lotteryCategoryId" style="width: 100%">
+                                    <option th:each="category : ${categories}"
+                                            th:value="${category.id}" th:text="${category.name}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="typeUp">Loại:</label>
+                                <select class="form-control custom-select" id="typeUp" name="type" style="width: 100%">
+                                    <option th:each="typeCode : ${typeCodes}"
+                                            th:value="${typeCode}" th:text="${typeCode}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="modesUp">Chế độ chơi:</label>
+                                <select class="select2" id="modesUp" name="modes" multiple="multiple" style="width: 100%">
+                                    <option th:each="modeCode : ${modeCodes}"
+                                            th:value="${modeCode}" th:text="${modeCode}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hour" class="col-form-label">Giờ quay số:</label>
+                                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0" id="hour" name="hour" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="min" class="col-form-label">Phút quay số:</label>
+                                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0" id="min" name="min" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="sec" class="col-form-label">Giây quay số:</label>
+                                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0" id="sec" name="sec" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="activeUp" class="col-form-label">Hoạt động:</label>
+                                <input type="checkbox" id="activeUp" name="active" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="vipUp" class="col-form-label">Xổ số HOT:</label>
+                                <input type="checkbox" id="vipUp" name="vip" checked>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="formCreate">
+        <form th:action="@{/otp/lottery/send-otp}" method="post">
+            <div class="modal fade" id="modalCreate" tabindex="-1" role="dialog" aria-labelledby="modalLabelCreate" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabelCreate">Tạo danh mục xổ số</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label for="name" class="col-form-label">Tên:</label>
+                                <input type="text" class="form-control" id="name" name="name" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="code" class="col-form-label">Mã:</label>
+                                <input type="text" class="form-control" id="code" name="code" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="lotteryCategoryId">Danh mục:</label>
+                                <select class="form-control custom-select" id="lotteryCategoryId" name="lotteryCategoryId" style="width: 100%">
+                                    <option th:each="category : ${categories}"
+                                            th:value="${category.id}" th:text="${category.name}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="type">Loại:</label>
+                                <select class="form-control custom-select" id="type" name="type" style="width: 100%">
+                                    <option th:each="typeCode : ${typeCodes}"
+                                            th:value="${typeCode}" th:text="${typeCode}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="modes">Chế độ chơi:</label>
+                                <select class="select2" id="modes" name="modes" multiple="multiple" style="width: 100%">
+                                    <option th:each="modeCode : ${modeCodes}"
+                                            th:value="${modeCode}" th:text="${modeCode}">
+
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hour" class="col-form-label">Giờ quay số:</label>
+                                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0" id="hour" name="hour" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="min" class="col-form-label">Phút quay số:</label>
+                                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0" id="min" name="min" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="sec" class="col-form-label">Giây quay số:</label>
+                                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0" id="sec" name="sec" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="active" class="col-form-label">Hoạt động:</label>
+                                <input type="checkbox" id="active" name="active" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="vip" class="col-form-label">Xổ số HOT:</label>
+                                <input type="checkbox" id="vip" name="vip" checked>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade" id="removeModalCenter" tabindex="-1" role="dialog" aria-labelledby="removeModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeModalCenterTitle">Alert message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="alert alert-danger">
+                        Are You sure You want to delete this User?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a href="" class="btn btn-danger" id="delRef">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="formSetupResult">
+        <form th:action="@{/lotteries/setupResult}" method="post">
+            <div class="modal fade" id="setupResultModal" tabindex="-1" role="dialog" aria-labelledby="setupResultLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="setupResultLabel">Setup kết quả</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" id="id" name="id" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label for="result" class="col-form-label">Kết quả:</label>
+                                <textarea type="text" rows="3" class="form-control" id="result" name="result" value=""></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

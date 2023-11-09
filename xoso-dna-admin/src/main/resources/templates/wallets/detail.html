@@ -1,0 +1,295 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Chi tiết Ví</title>
+</head>
+<body>
+
+<div layout:fragment="header" class="col-sm-6">
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Chi tiết ví</li>
+    </ol>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row text-right">
+            <div class="col-12" style="margin-block: 10px; display: flex; justify-content: flex-end">
+
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#deposit" style="width: 120px; margin-right: 10px">Nộp tiền</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#withdraw" style="width: 120px; margin-right: 10px">Rút tiền</button>
+
+                <form th:action="${'/wallets/' + walletData.id +  '/lock'}" method="post">
+                    <button th:if="${walletData.status == 'ACTIVE'}" type="submit" class="btn btn-danger" style="width: 130px;">Khoá ví</button>
+                </form>
+                <form th:action="${'/wallets/' + walletData.id +  '/unlock'}" method="post">
+                    <button th:if="${walletData.status == 'INACTIVE'}" type="submit" class="btn btn-success" style="width: 130px;">Mở ví</button>
+                </form>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+
+                <div style="font-weight: 600;" class="callout callout-info">
+                    <h5>Số dư hiện tại:</h5>
+                    <span style="color: #2c5ba9; font-size: 20px;" th:text="${#strings.replace(#numbers.formatDecimal(walletData.balance, 0, 'COMMA', 0, 'POINT'), '.00', '') + ' LAK'}"></span>
+                </div>
+
+
+                <!-- Main content -->
+                <div class="invoice p-3 mb-3">
+                    <!-- title row -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                Thông tin khách hàng
+                            </h4>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- info row -->
+                    <div class="row invoice-info">
+                        <div class=" col-6">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th style="width:50%">Trạng thái ví:</th>
+                                        <td style="color: rgb(37, 88, 228);" th:text="${walletData.status}"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Ngày tạo ví</th>
+                                        <td th:text="${walletData.createdDate}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tài khoản</th>
+                                        <td th:text="${walletData.username}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width:50%">Họ và tên:</th>
+                                        <td th:text="${walletData.fullName}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Số điện thoại</th>
+                                        <td th:text="${walletData.mobileNo}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div><!-- /.col -->
+                        <!-- /.col -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Danh sách tài khoản</h3>
+                            </div>
+
+                            <!-- /.card-header -->
+                            <div class="col-12 table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Ngân hàng</th>
+                                        <th>Tên tài khoản</th>
+                                        <th>Số tài khoản</th>
+                                        <th>Số thẻ</th>
+                                        <th>Kích hoạt?</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="customFields">
+                                    <tr th:each="bankAccount : ${walletData.clientBankAccounts}">
+                                        <td th:text="${bankAccount.bankName}"></td>
+                                        <td th:text="${bankAccount.accountName}"></td>
+                                        <td th:text="${bankAccount.accountNumber}"></td>
+                                        <td th:text="${bankAccount.cardNumber}"></td>
+                                        <td>
+                                            <div class="icheck-success d-inline">
+                                                <input th:checked="${bankAccount.enabled}" type="radio" th:id="${bankAccount.accountNumber}" th:name="${bankAccount.accountNumber}">
+                                                <label th:for="${bankAccount.accountNumber}">
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- Main content -->
+                <div class="invoice p-3 mb-3">
+                    <!-- title row -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                Giao dịch gần nhất
+                            </h4>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="transaction-completed-tab" data-toggle="pill" href="#transaction-completed" role="tab" aria-controls="transaction-completed" aria-selected="true">Hoàn thành</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="transaction-process-tab" data-toggle="pill" href="#transaction-process" role="tab" aria-controls="transaction-process" aria-selected="false">Đang xử lý</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="custom-content-below-tabCompleted">
+                        <div class="tab-pane fade show active" id="transaction-completed" role="tabpanel" aria-labelledby="transaction-completed-tab">
+                            <div class="row">
+                                <div class="col-12 table-responsive">
+                                    <div class="card-body table-responsive p-0" style="height: 300px;">
+                                        <table class="table table-head-fixed text-nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th>#Mã GD</th>
+                                                <th>Tên KH</th>
+                                                <th>Số ĐT</th>
+                                                <th>Loại giao dịch</th>
+                                                <th>Ngày tạo</th>
+                                                <th>Người tạo</th>
+                                                <th>Ngày duyệt</th>
+                                                <th>Người duyệt</th>
+                                                <th>Trạng thái</th>
+                                                <th>Số tiền</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="row : ${transactionsSuccess.pageItems}">
+                                                <td th:text="${row.id}"></td>
+                                                <td th:text="${row.fullName}"></td>
+                                                <td th:text="${row.mobileNo}"></td>
+                                                <td th:text="${row.transactionType}"></td>
+                                                <td th:text="${row.submittedDate}"></td>
+                                                <td th:text="${row.submittedBy}"></td>
+                                                <td th:text="${row.approvedDate}"></td>
+                                                <td th:text="${row.approvedBy}"></td>
+                                                <td><span class="tag tag-success" th:text="${row.transactionStatus}"></span></td>
+                                                <td th:text="${#strings.replace(#numbers.formatDecimal(row.amount, 0, 'COMMA', 0, 'POINT'), '.00', '') + ' VND'}"></td>
+
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="transaction-process" role="tabpanel" aria-labelledby="transaction-process-tab">
+                            <div class="row">
+                                <div class="col-12 table-responsive">
+                                    <div class="card-body table-responsive p-0" style="height: 300px;">
+                                        <table class="table table-head-fixed text-nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th>#Mã GD</th>
+                                                <th>Tên KH</th>
+                                                <th>Số ĐT</th>
+                                                <th>Loại giao dịch</th>
+                                                <th>Ngày tạo</th>
+                                                <th>Trạng thái</th>
+                                                <th>Số tiền</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="row : ${transactionsProcess.pageItems}">
+                                                <td th:text="${row.id}"></td>
+                                                <td th:text="${row.fullName}"></td>
+                                                <td th:text="${row.mobileNo}"></td>
+                                                <td th:text="${row.transactionType}"></td>
+                                                <td th:text="${row.submittedDate}"></td>
+                                                <td><span class="tag tag-success" th:text="${row.transactionStatus}"></span></td>
+                                                <td th:text="${#strings.replace(#numbers.formatDecimal(row.amount, 0, 'COMMA', 0, 'POINT'), '.00', '') + ' VND'}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deposit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addClassModalLabel">Tạo giao dịch nộp tiền</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form th:action="${'/wallets/' + walletData.id + '/transactions/deposit'}" th:object="${depositRequest}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="amount">Số tiền:</label>
+                            <input type="number" class="form-control" id="amount" th:field="*{amount}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Nội dung nộp:</label>
+                            <textarea id="content" class="form-control" rows="3" th:field="*{content}"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                        <button type="submit" class="btn btn-primary">Xác nhận nộp tiền</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="withdraw">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addClassModalLabel1">Tạo giao dịch rút tiền</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form th:action="${'/wallets/' + walletData.id + '/transactions/withdraw'}" th:object="${withdrawRequest}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="amount">Số tiền:</label>
+                            <input type="number" class="form-control" id="amount" th:field="*{amount}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Nội dung nộp:</label>
+                            <textarea id="content" class="form-control" rows="3" th:field="*{content}"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Huỷ</button>
+                        <button type="submit" class="btn btn-primary">Xác nhận rút tiền</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,2 @@
+INSERT INTO role(description, is_disabled, name, created_date, modified_date) VALUES ('Role for admin', false, 'ADMIN', Now(), Now());
+INSERT INTO role(description, is_disabled, name, created_date, modified_date) VALUES ('Role for client', false, 'CLIENT', Now(), Now());

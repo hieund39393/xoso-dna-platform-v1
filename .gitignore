@@ -1,0 +1,10 @@
+xoso-dna-admin/target/
+xoso-dna-api/target/
+xoso-dna-schedule/target/
+modules/core/target/
+
+.idea
+.idea/
+/xoso-dna-api/lot77_api.tar
+/xoso-dna-schedule/lot77_schedule.tar
+/xoso-dna-admin/lot77_admin.tar
